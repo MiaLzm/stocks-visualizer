@@ -121,7 +121,7 @@ class Stocks(object):
         
 def main():
     stocks = Stocks()
-    # stocks.save_stock_files()
+    # stocks.save_stock_files() # this creates source files for all companies.. takes a looooonnnngggg time!
     stocks.save_trading_data("GOOG")
     goog = stocks.get_all_trading_history("GOOG")
     googDt = stocks.get_trading_history('GOOG', '2021-01-01', '2021-06-01')
