@@ -8,12 +8,14 @@ Created on Fri Oct 22 15:48:49 2021
 import pandas as pd
 import os
 from pandas_datareader import data
+from datetime import datetime as dt
+from datetime import timedelta
 
 class Stocks(object):
     """
         Class that retrieves and manages stock trading data
     """
-    def __init__(self):
+    def __init__(self, year):
         # path to data files
         self.STOCKS_BASE_PATH = os.path.join("datasets", "stocks")
         self.STOCKS_DIR = os.makedirs(self.STOCKS_BASE_PATH, exist_ok=True)
@@ -21,18 +23,69 @@ class Stocks(object):
         
         # financial data source
         self.STOCK_SOURCE = 'yahoo'
-        self.START_DATE = '2021-01-01'
+        self.START_DATE= f'{year}-01-01'
         
         
         # list of companies
-        self.TICKER_OVERVIEW = pd.DataFrame(pd.read_csv("nasdaq_screener.csv"))
-        self.stocks_list = [] # populates UI with 
+        self.TICKER_OVERVIEW = pd.DataFrame(pd.read_csv("nasdaq_screener.csv")).fillna("Unknown") # handle NaN values
+        self.stocks_list = [] # populates UI with
+        self.CURRENT_STOCK_DF = pd.DataFrame()
+        self.CURRENT_TICKER = ''
+    
+    def clean_data(self):
+        fin_df = self.get_current_stock()
+        # enforce date formatting for Date column and set it as the index
+        fin_df['Date'] = pd.to_datetime([dt.today()+timedelta(days=x) for x in range(len(fin_df))])
+        return fin_df
+    
+    def get_current_ticker(self):
+        """        
+        Returns the current ticker symbol name.
         
+        Returns
+        -------
+        string
+            Ticker symbol for current stock.
+
+        """
+        return self.CURRENT_TICKER
+    
+    def set_current_stock(self, ticker, startDt):       
+        """
+        Function that sets the full trading data for the selected stock from .
+
+        Parameters
+        ----------
+        ticker : string
+            A trading entity ticker.
+        startDt : Date
+            Earliest trading date.
+
+        Returns
+        -------
+        None.
+
+        """
+        try:
+            self.CURRENT_STOCK_DF = data.DataReader(ticker, self.STOCK_SOURCE, startDt)
+            print('Retrieved ', len(self.CURRENT_STOCK_DF), ' rows for ', ticker)
+        except Exception as e:
+            print('Unable to retrieve data for ', ticker, '. ', e)
+        
+    def get_current_stock(self):
+        """
+        Function that retrieves financial data for the currently selected trading entity.
+        
+        Returns
+        -------
+        DataFrame
+            Full trading data for the selected stock.
+        """
+        return self.CURRENT_STOCK_DF
     
     def save_trading_data(self, ticker_sym):
         """
-        
-        Retrieve trading data for a single trading entity
+        Retrieve trading data for a single trading entity and save it to a file.
         Parameters
         ----------
         ticker_sym : String
@@ -44,15 +97,15 @@ class Stocks(object):
 
         """
         try:
-            stock = data.DataReader(ticker_sym, self.STOCK_SOURCE, self.START_DATE)
-            stock.to_csv(self.STOCKS_BASE_PATH + f"/{ticker_sym}.csv")
-            print("Retrieved stock history for ", ticker_sym)
+            self.set_current_stock(ticker_sym, self.START_DATE)
+            self.get_current_stock().to_csv(self.STOCKS_BASE_PATH + f"/{ticker_sym}.csv")
+            print("Saved stock history for ", ticker_sym, ".csv")
             self.stocks_list.append(ticker_sym) # add ticker to valid list (for UI)
         except Exception as e :
            print(f"Could not retrieve stock for {ticker_sym}. {e}")
                     
             
-    # function to retrieve stock from listed companies
+    # function to retrieve stock from list of companies
     def save_stock_files(self):
         """
         Retrieve and save a file trading entities from a list of trading companies.
@@ -67,7 +120,7 @@ class Stocks(object):
             self.save_trading_data(str(ticker)) # need to find earliest date for the stock
     
     
-    def get_all_trading_history(self, ticker):
+    def get_ticker_trading_history(self, ticker):
         """
         Function that retrieves trading data from saved files for a trading entity
 
@@ -79,17 +132,47 @@ class Stocks(object):
         Returns
         -------
         trading_history : Data Frame
-            Trading data for teh selected period.
+            Trading data for the selected period.
 
         """
         # open the source file and return it as a DF
         try:
-            trading_history = pd.read_csv(f"datasets/stocks/{ticker}.csv")
+            # trading_history = pd.read_csv(self.STOCKS_BASE_PATH + f"/{ticker}.csv") # remove for performance
+            self.set_current_stock(ticker, self.START_DATE)
+            trading_history = self.get_current_stock()
+            print(f"Retrieved {len(trading_history)} rows from file for {ticker}") # returns today as start date
         except FileNotFoundError:
-                trading_history = self.data.DataReader(ticker, self.STOCK_SOURCE, self.START_DATE)
-        print("Retrieved ", len(trading_history), " rows for ", ticker)
+            trading_history = self.get_current_stock() # returns today as start date
+        self.clean_data()
+        self.CURRENT_TICKER = ticker # saves stock symbol as a class variable
         return trading_history
      
+    def get_all_tickers_overview(self):
+        """
+        Retrieves company details for all companies in the companies dataset.
+
+        Returns
+        -------
+        DataFrame
+            DataFrame containing overview for all companies.
+
+        """
+        return self.TICKER_OVERVIEW
+    
+    
+    def get_trading_companies(self):
+       """
+       This function is called by the app to retrieve a list of trading entities
+       that have been loaded to the application.
+    
+       Returns
+       -------
+       List
+           Trading entities that have been loaded to the application.
+    
+       """
+       return self.stocks_list
+        
 
     def get_trading_history(self, ticker, startDt, endDt):
         """
@@ -107,25 +190,21 @@ class Stocks(object):
         Returns
         -------
         trading_history : Data Frame
-            Trading data for teh selected period.
+            Trading data for the selected period.
 
         """
         # open the source file and return it as a DF
         try:
             trading_history = pd.read_csv(f"datasets/stocks/{ticker}.csv")
+            self.clean_data()
             print("Retrieved ", len(trading_history), " rows for ", ticker, "between ", startDt, " and ", endDt)
         except FileNotFoundError:
-                trading_history = self.data.DataReader(ticker, self.STOCK_SOURCE, startDt)
-        trading_history = trading_history[(trading_history['Date'] >= startDt) & (trading_history['Date'] <= endDt)]
+                self.save_trading_data(ticker) # save the stock to CSV
+                trading_history = self.get_current_stock()
+                self.clean_data()
+        
+        
+        # filter data using startDt and endDt
+        trading_history = trading_history[(trading_history.index >= startDt) & (trading_history.index <= endDt)]
         return trading_history                 
         
-def main():
-    stocks = Stocks()
-    # stocks.save_stock_files()
-    stocks.save_trading_data("GOOG")
-    goog = stocks.get_all_trading_history("GOOG")
-    googDt = stocks.get_trading_history('GOOG', '2021-01-01', '2021-06-01')
-    
-if __name__ == '__main__':
-    # we are calling the amin function
-    main()
