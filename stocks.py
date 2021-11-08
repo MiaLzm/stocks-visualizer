@@ -23,7 +23,7 @@ class Stocks(object):
         
         # financial data source
         self.STOCK_SOURCE = 'yahoo'
-        self.START_DATE= f'{year}-01-01'
+        self.START_DATE= dt.strptime(f'{year}-01-01', '%Y-%m-%d')
         
         
         # list of companies
