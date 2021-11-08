@@ -9,12 +9,12 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.dates import DateFormatter
+import seaborn as sns
 import datetime
 import os.path
 from dateutil.relativedelta import relativedelta # to add days or years
 
-# if not already populated, retrieve historical financials data from a list of companies
-
+# initialize stocks object to load data from the beginning of the chosen year to current date
 stocks = Stocks(2018)
 
 # retrieve and save stocks data (if trading data has not been saved)
@@ -58,7 +58,8 @@ st.write(params["company"])
 
 
 # ------------------ Load dataset from filter parameters -----------#
-df = stocks.get_ticker_trading_history(params['stock'])
+df = stocks.get_ticker_trading_history(params['stock']) 
+#df = stocks.get_trading_history(params['stock'], stocks.START_DATE, datetime.datetime.now().strftime("Y-%m-%d"))
 
 
 # format date to timestamp
@@ -75,32 +76,24 @@ end_date = df.index[len(df)-1]
 periodRange = st.sidebar.date_input("Period Range", min_value=start_date)
 
 ## Range selector
-cols1,_ = st.sidebar.columns((1,2)) # To make it narrower
 format = 'MMM DD, YYYY'  # format output
 start_date = datetime.date(year=2021,month=1,day=1)-relativedelta(years=20)  #  I need some range in the past
 end_date = datetime.datetime.now().date()-relativedelta(years=2)
 max_days = end_date-start_date
-
-slider = cols1.slider('Select date', min_value=start_date, value=end_date ,max_value=end_date, format=format)
-## Sanity check
-st.sidebar.table(pd.DataFrame([[start_date, slider, end_date]],
-              columns=['start',
-                       'selected',
-                       'end'],
-              index=['date']))
         
 # pull in daily data
 st.sidebar.button("Refresh")
 
 
 # ------------------ Plot data using filter parameters -------------#
-# --- time series plot function ---
+# --- time series plot function - Matplotlib ---
 def plot_time_series(title, y_label, Y, df = df):
     # timeline for each stock
     start_date = df.index[0]
     end_date = df.index[len(df)-1]
     pd.plotting.plot_params = {'x_compat': True,}
     fig, ax = plt.subplots()
+    fig.set_figheight(2)
     plt.plot(df.index, Y)
     ax.set(
            xlabel = "date",
@@ -108,16 +101,41 @@ def plot_time_series(title, y_label, Y, df = df):
            title = f"""{ticker} {title} {start_date} - {end_date}""",
            xlim = (start_date, end_date)
           )
+    # TODO: make x,y axis labels smaller
     plt.xticks(rotation=90)
     st.pyplot(fig)
+
+def plot_timeseries_sns(title, y_label, y, df = df):
+    # create timeline for each stock
+    start_date = df.index[0]
+    end_date = df.index[len(df)-1]
     
+    # plot selected timeframe
+    fig = plt.figure()
+    fig.set_figheight(2)
+    sns.lineplot(df.index, y)
+    plt.xticks(rotation = 90)
+    st.pyplot(fig)
     
 # --- stock price --- #
-stock_price_series = plot_time_series('stock price', 'USD ($)', df.Close)
+# stock_price_series = plot_time_series('stock price', 'USD ($)', df.Close)
+stock_price_series = plot_timeseries_sns('stock price', 'USD ($)', df.Close)
 
 
 # --- stock volume --- #
-volume_series = plot_time_series('trading volume', 'shares (millions)', df['Volume (millions)'])
+# volume_series = plot_time_series('trading volume', 'shares (millions)', df['Volume (millions)'])
+volume_series = plot_timeseries_sns('trading volume', 'shares (millions)', df['Volume (millions)'])
+
+
+# filter dates
+slider = st.slider('Select date', min_value=start_date, value=end_date ,max_value=end_date, format=format)
+## Sanity check
+st.table(pd.DataFrame([[start_date, slider, end_date]],
+              columns=['start',
+                       'selected',
+                       'end'],
+              index=['date']))
+
 
 # retrieve the last 5 trading days
 st.write(f"""## *{params['stock']}* 5-day Performance """)

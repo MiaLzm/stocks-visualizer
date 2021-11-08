@@ -1,0 +1,108 @@
+No data fetched for symbol Agilent Technologies Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  Agilent Technologies Inc. Common Stock
+No data fetched for symbol Alcoa Corporation Common Stock  using YahooDailyReader
+Retrieved stock history for  Alcoa Corporation Common Stock 
+No data fetched for symbol Ares Acquisition Corporation Class A Ordinary Shares using YahooDailyReader
+Retrieved stock history for  Ares Acquisition Corporation Class A Ordinary Shares
+No data fetched for symbol ATA Creativity Global American Depositary Shares using YahooDailyReader
+Retrieved stock history for  ATA Creativity Global American Depositary Shares
+No data fetched for symbol Armada Acquisition Corp. I Unit using YahooDailyReader
+Retrieved stock history for  Armada Acquisition Corp. I Unit
+No data fetched for symbol Aadi Bioscience Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  Aadi Bioscience Inc. Common Stock
+No data fetched for symbol Arlington Asset Investment Corp Class A (new) using YahooDailyReader
+Retrieved stock history for  Arlington Asset Investment Corp Class A (new)
+Unable to read URL: https://finance.yahoo.com/quote/Arlington Asset Investment Corp 7.00% /history?period1=1609473600&period2=1635044399&interval=1d&frequency=1d&filter=history
+Response Text:
+b'<html><meta charset=\'utf-8\'><script>if(window!=window.top){document.write(\'<p>Content is currently unavailable.</p><img src="//geo.yahoo.com/p?s=1197757039&t=\'+new Date().getTime()+\'&_R=\'+encodeURIComponent(document.referrer)+\'&err=404&err_url=\'+\'https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArlington%2520Asset%2520Investment%2520Corp%25207.00%2525%2520%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'+\'" width="0px" height="0px"/>\');}else{window.location.replace(\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArlington%2520Asset%2520Investment%2520Corp%25207.00%2525%2520%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\');}</script><noscript><META http-equiv="refresh" content="0;URL=\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArlington%2520Asset%2520Investment%2520Corp%25207.00%2525%2520%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'"></noscript></html>'
+Retrieved stock history for  Arlington Asset Investment Corp 7.00% 
+Unable to read URL: https://finance.yahoo.com/quote/Arlington Asset Investment Corp 8.250% Seies C Fixed-to-Floating Rate Cumulative Redeemable Preferred Stock   /history?period1=1609473600&period2=1635044399&interval=1d&frequency=1d&filter=history
+Response Text:
+b'<html><meta charset=\'utf-8\'><script>if(window!=window.top){document.write(\'<p>Content is currently unavailable.</p><img src="//geo.yahoo.com/p?s=1197757039&t=\'+new Date().getTime()+\'&_R=\'+encodeURIComponent(document.referrer)+\'&err=404&err_url=\'+\'https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArlington%2520Asset%2520Investment%2520Corp%25208.250%2525%2520Seies%2520C%2520Fixed-to-Floating%2520Rate%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2520%2520%2520%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'+\'" width="0px" height="0px"/>\');}else{window.location.replace(\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArlington%2520Asset%2520Investment%2520Corp%25208.250%2525%2520Seies%2520C%2520Fixed-to-Floating%2520Rate%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2520%2520%2520%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\');}</script><noscript><META http-equiv="refresh" content="0;URL=\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArlington%2520Asset%2520Investment%2520Corp%25208.250%2525%2520Seies%2520C%2520Fixed-to-Floating%2520Rate%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2520%2520%2520%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'"></noscript></html>'
+Retrieved stock history for  Arlington Asset Investment Corp 8.250% Seies C Fixed-to-Floating Rate Cumulative Redeemable Preferred Stock   
+Unable to read URL: https://finance.yahoo.com/quote/Arlington Asset Investment Corp 6.000% Senior Notes Due 2026/history?period1=1609473600&period2=1635044399&interval=1d&frequency=1d&filter=history
+Response Text:
+b'<html><meta charset=\'utf-8\'><script>if(window!=window.top){document.write(\'<p>Content is currently unavailable.</p><img src="//geo.yahoo.com/p?s=1197757039&t=\'+new Date().getTime()+\'&_R=\'+encodeURIComponent(document.referrer)+\'&err=404&err_url=\'+\'https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArlington%2520Asset%2520Investment%2520Corp%25206.000%2525%2520Senior%2520Notes%2520Due%25202026%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'+\'" width="0px" height="0px"/>\');}else{window.location.replace(\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArlington%2520Asset%2520Investment%2520Corp%25206.000%2525%2520Senior%2520Notes%2520Due%25202026%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\');}</script><noscript><META http-equiv="refresh" content="0;URL=\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArlington%2520Asset%2520Investment%2520Corp%25206.000%2525%2520Senior%2520Notes%2520Due%25202026%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'"></noscript></html>'
+Retrieved stock history for  Arlington Asset Investment Corp 6.000% Senior Notes Due 2026
+No data fetched for symbol American Airlines Group Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  American Airlines Group Inc. Common Stock
+No data fetched for symbol Altisource Asset Management Corp Com using YahooDailyReader
+Retrieved stock history for  Altisource Asset Management Corp Com
+No data fetched for symbol Atlantic American Corporation Common Stock using YahooDailyReader
+Retrieved stock history for  Atlantic American Corporation Common Stock
+No data fetched for symbol Aarons Holdings Company Inc. Common Stock  using YahooDailyReader
+Retrieved stock history for  Aarons Holdings Company Inc. Common Stock 
+No data fetched for symbol Applied Optoelectronics Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  Applied Optoelectronics Inc. Common Stock
+No data fetched for symbol AAON Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  AAON Inc. Common Stock
+No data fetched for symbol Advance Auto Parts Inc. using YahooDailyReader
+Retrieved stock history for  Advance Auto Parts Inc.
+No data fetched for symbol Apple Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  Apple Inc. Common Stock
+No data fetched for symbol Accelerate Acquisition Corp. Class A Common Stock using YahooDailyReader
+Retrieved stock history for  Accelerate Acquisition Corp. Class A Common Stock
+No data fetched for symbol American Assets Trust Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  American Assets Trust Inc. Common Stock
+No data fetched for symbol Autoscope Technologies Corporation Common Stock using YahooDailyReader
+Retrieved stock history for  Autoscope Technologies Corporation Common Stock
+No data fetched for symbol Almaden Minerals Ltd. Common Shares using YahooDailyReader
+Retrieved stock history for  Almaden Minerals Ltd. Common Shares
+No data fetched for symbol Atlas Air Worldwide Holdings NEW Common Stock using YahooDailyReader
+Retrieved stock history for  Atlas Air Worldwide Holdings NEW Common Stock
+No data fetched for symbol AllianceBernstein Holding L.P.  Units using YahooDailyReader
+Retrieved stock history for  AllianceBernstein Holding L.P.  Units
+No data fetched for symbol ABB Ltd Common Stock using YahooDailyReader
+Retrieved stock history for  ABB Ltd Common Stock
+No data fetched for symbol AbbVie Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  AbbVie Inc. Common Stock
+No data fetched for symbol AmerisourceBergen Corporation Common Stock using YahooDailyReader
+Retrieved stock history for  AmerisourceBergen Corporation Common Stock
+No data fetched for symbol Ameris Bancorp Common Stock using YahooDailyReader
+Retrieved stock history for  Ameris Bancorp Common Stock
+No data fetched for symbol AbCellera Biologics Inc. Common Shares using YahooDailyReader
+Retrieved stock history for  AbCellera Biologics Inc. Common Shares
+No data fetched for symbol Abcam plc American Depositary Shares using YahooDailyReader
+Retrieved stock history for  Abcam plc American Depositary Shares
+No data fetched for symbol Abeona Therapeutics Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  Abeona Therapeutics Inc. Common Stock
+No data fetched for symbol Ambev S.A. American Depositary Shares (Each representing 1 Common Share) using YahooDailyReader
+Retrieved stock history for  Ambev S.A. American Depositary Shares (Each representing 1 Common Share)
+No data fetched for symbol Asbury Automotive Group Inc Common Stock using YahooDailyReader
+Retrieved stock history for  Asbury Automotive Group Inc Common Stock
+No data fetched for symbol ABG Acquisition Corp. I Class A Ordinary Shares using YahooDailyReader
+Retrieved stock history for  ABG Acquisition Corp. I Class A Ordinary Shares
+No data fetched for symbol ARCA biopharma Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  ARCA biopharma Inc. Common Stock
+No data fetched for symbol ABM Industries Incorporated Common Stock using YahooDailyReader
+Retrieved stock history for  ABM Industries Incorporated Common Stock
+No data fetched for symbol ABIOMED Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  ABIOMED Inc. Common Stock
+No data fetched for symbol Airbnb Inc. Class A Common Stock using YahooDailyReader
+Retrieved stock history for  Airbnb Inc. Class A Common Stock
+No data fetched for symbol Acumen Pharmaceuticals Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  Acumen Pharmaceuticals Inc. Common Stock
+No data fetched for symbol Arbor Realty Trust Common Stock using YahooDailyReader
+Retrieved stock history for  Arbor Realty Trust Common Stock
+Unable to read URL: https://finance.yahoo.com/quote/Arbor Realty Trust 6.375% Series D Cumulative Redeemable Preferred Stock Liquidation Preference $25.00 per Share/history?period1=1609473600&period2=1635044399&interval=1d&frequency=1d&filter=history
+Response Text:
+b'<html><meta charset=\'utf-8\'><script>if(window!=window.top){document.write(\'<p>Content is currently unavailable.</p><img src="//geo.yahoo.com/p?s=1197757039&t=\'+new Date().getTime()+\'&_R=\'+encodeURIComponent(document.referrer)+\'&err=404&err_url=\'+\'https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArbor%2520Realty%2520Trust%25206.375%2525%2520Series%2520D%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2520Liquidation%2520Preference%2520%2425.00%2520per%2520Share%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'+\'" width="0px" height="0px"/>\');}else{window.location.replace(\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArbor%2520Realty%2520Trust%25206.375%2525%2520Series%2520D%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2520Liquidation%2520Preference%2520%2425.00%2520per%2520Share%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\');}</script><noscript><META http-equiv="refresh" content="0;URL=\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArbor%2520Realty%2520Trust%25206.375%2525%2520Series%2520D%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2520Liquidation%2520Preference%2520%2425.00%2520per%2520Share%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'"></noscript></html>'
+Retrieved stock history for  Arbor Realty Trust 6.375% Series D Cumulative Redeemable Preferred Stock Liquidation Preference $25.00 per Share
+Unable to read URL: https://finance.yahoo.com/quote/Arbor Realty Trust 6.25% Series E Cumulative Redeemable Preferred Stock/history?period1=1609473600&period2=1635044399&interval=1d&frequency=1d&filter=history
+Response Text:
+b'<html><meta charset=\'utf-8\'><script>if(window!=window.top){document.write(\'<p>Content is currently unavailable.</p><img src="//geo.yahoo.com/p?s=1197757039&t=\'+new Date().getTime()+\'&_R=\'+encodeURIComponent(document.referrer)+\'&err=404&err_url=\'+\'https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArbor%2520Realty%2520Trust%25206.25%2525%2520Series%2520E%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'+\'" width="0px" height="0px"/>\');}else{window.location.replace(\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArbor%2520Realty%2520Trust%25206.25%2525%2520Series%2520E%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\');}</script><noscript><META http-equiv="refresh" content="0;URL=\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArbor%2520Realty%2520Trust%25206.25%2525%2520Series%2520E%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'"></noscript></html>'
+Retrieved stock history for  Arbor Realty Trust 6.25% Series E Cumulative Redeemable Preferred Stock
+Unable to read URL: https://finance.yahoo.com/quote/Arbor Realty Trust 6.25% Series F Fixed-to-Floating Rate Cumulative Redeemable Preferred Stock Liquidation Preference $25.00 per share/history?period1=1609473600&period2=1635044399&interval=1d&frequency=1d&filter=history
+Response Text:
+b'<html><meta charset=\'utf-8\'><script>if(window!=window.top){document.write(\'<p>Content is currently unavailable.</p><img src="//geo.yahoo.com/p?s=1197757039&t=\'+new Date().getTime()+\'&_R=\'+encodeURIComponent(document.referrer)+\'&err=404&err_url=\'+\'https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArbor%2520Realty%2520Trust%25206.25%2525%2520Series%2520F%2520Fixed-to-Floating%2520Rate%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2520Liquidation%2520Preference%2520%2425.00%2520per%2520share%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'+\'" width="0px" height="0px"/>\');}else{window.location.replace(\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArbor%2520Realty%2520Trust%25206.25%2525%2520Series%2520F%2520Fixed-to-Floating%2520Rate%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2520Liquidation%2520Preference%2520%2425.00%2520per%2520share%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\');}</script><noscript><META http-equiv="refresh" content="0;URL=\'https://www.yahoo.com/?err=404&err_url=https%3A%2F%2Ffinance.yahoo.com%2Fquote%2FArbor%2520Realty%2520Trust%25206.25%2525%2520Series%2520F%2520Fixed-to-Floating%2520Rate%2520Cumulative%2520Redeemable%2520Preferred%2520Stock%2520Liquidation%2520Preference%2520%2425.00%2520per%2520share%2Fhistory%3Fperiod1%3D1609473600%26period2%3D1635044399%26interval%3D1d%26frequency%3D1d%26filter%3Dhistory\'"></noscript></html>'
+Retrieved stock history for  Arbor Realty Trust 6.25% Series F Fixed-to-Floating Rate Cumulative Redeemable Preferred Stock Liquidation Preference $25.00 per share
+No data fetched for symbol Absci Corporation Common Stock using YahooDailyReader
+Retrieved stock history for  Absci Corporation Common Stock
+No data fetched for symbol Absolute Software Corporation Common Stock using YahooDailyReader
+Retrieved stock history for  Absolute Software Corporation Common Stock
+No data fetched for symbol Abbott Laboratories Common Stock using YahooDailyReader
+Retrieved stock history for  Abbott Laboratories Common Stock
+No data fetched for symbol Allegiance Bancshares Inc. Common Stock using YahooDailyReader
+Retrieved stock history for  Allegiance Bancshares Inc. Common Stock
+Traceback (most recent call last):
+
