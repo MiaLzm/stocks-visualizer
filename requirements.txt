@@ -5,4 +5,3 @@ pandas
 pandas_datareader
 datetime
 seaborn
-dateutil
