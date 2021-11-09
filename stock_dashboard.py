@@ -6,16 +6,18 @@ import numpy as np
 from stocks import Stocks
 from stock_analyzer import Analyzer
 import seaborn as sns
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.dates import DateFormatter
 import seaborn as sns
 import datetime
+from datetime import date
 import os.path
 from dateutil.relativedelta import relativedelta # to add days or years
 
 # initialize stocks object to load data from the beginning of the chosen year to current date
-stocks = Stocks(2018)
+stocks = Stocks(1980)
 
 # retrieve and save stocks data (if trading data has not been saved)
 if not os.path.exists('datasets/stocks'):
@@ -23,17 +25,18 @@ if not os.path.exists('datasets/stocks'):
 
 
 companies = stocks.get_all_tickers_overview() # retrieves companies and descriptions, autofils NaNs
-companies.reset_index(drop=True)
-companies.set_index('Symbol')
+companies = companies.set_index('Symbol')
 
 
 # dictionary to hold filter parameters
 params = dict()
 
 
-# ----------------- Build UI elements ------------------------------#
+# ----------------- Build UI filter menu ------------------------------#
 # create sets to store unique instances to populate select boxes
 sectors = set(companies.loc[:,"Sector"])
+stock_name = sorted(set(companies.loc[:, "Name"]))
+stock_name.insert(0, "")
 
 st.write("""
          # Stock analyzer
@@ -41,60 +44,74 @@ st.write("""
              Use the Sector to identify stocks of interest.
          """)
 
+stock = st.sidebar.selectbox("Search for a stock (Option 1) type ahead single select", stock_name, index=0)
+stock_two = st.sidebar.multiselect("Search for a stock (Option 2) type ahead multi-select", options = stock_name)
+
+st.sidebar.write("--------------")
+st.sidebar.write("Filters")
 sector = st.sidebar.selectbox("Choose a sector", sectors)
 params["Sector"] = sector
-
-
 # filter stocks dropdown based on sector
 ticker_syms = companies.loc[companies['Sector'] == sector]
-ticker = st.sidebar.selectbox("Choose a stock", ticker_syms)
-params["stock"] = ticker
-params["company"] = companies.loc[companies["Symbol"] == ticker ]
+ticker = st.sidebar.selectbox("Choose a stock", ticker_syms.index)
+params["Stock"] = ticker
+params["Company"] = companies.loc[companies.index == ticker ]
+params["Company name"] = companies.loc[companies.index == ticker].Name
 
 
 # company details
-st.write(f"""## *{params["stock"]}*""")
-st.write(params["company"])
+st.write(f"""## *{params["Stock"]}*""")
+st.write(params["Company"])
 
 
 # ------------------ Load dataset from filter parameters -----------#
-df = stocks.get_ticker_trading_history(params['stock']) 
-#df = stocks.get_trading_history(params['stock'], stocks.START_DATE, datetime.datetime.now().strftime("Y-%m-%d"))
+todayDt = date.today()
+#df = stocks.get_ticker_trading_history(params['Stock']) 
+df = stocks.get_trading_history(params['Stock'], 
+                                stocks.START_DATE, 
+                                todayDt)
 
 
 # format date to timestamp
-df['Date'] = pd.to_datetime(df['Date'], format = '%Y-%m-%d')
+df.index = pd.to_datetime(df.index, format = '%Y-%m-%d')
 
 
-# report trading Volume in millions
-df['Volume'] = df.Volume/1000000
-df = df.rename(columns={'Volume': 'Volume (millions)'})
+# ensure to report trading Volume in millions
+if not 'Volume (millions)' in df:
+    stocks.clean_data(df)
 
-# set trading period
-start_date = df.index[0]
-end_date = df.index[len(df)-1]
-periodRange = st.sidebar.date_input("Period Range", min_value=start_date)
 
-## Range selector
-format = 'MMM DD, YYYY'  # format output
-start_date = datetime.date(year=2021,month=1,day=1)-relativedelta(years=20)  #  I need some range in the past
-end_date = datetime.datetime.now().date()-relativedelta(years=2)
-max_days = end_date-start_date
-        
+#TODO: show how old the data is - and provide a refresh      
 # pull in daily data
 st.sidebar.button("Refresh")
 
-
+# ------------------ Create floorplans -----------------------------#
+col1, col2 = st.columns(2)
 # ------------------ Plot data using filter parameters -------------#
-# --- time series plot function - Matplotlib ---
-def plot_time_series(title, y_label, Y, df = df):
+visualizations = ["Stock price", "Stock Volume", "Moving averages"]
+
+
+# filter dates
+st.selectbox("Historical perspective", ["10 years", "5 years", "1 year", "6 months", "3 months", "1 month"])
+
+# --- time series plot function - Matplotlib --- #
+def plot_time_series(title, y_label, Y, col, df = df):
+    # set plot font
+    font = {'family': 'normal',
+            'weight': 'normal',
+            'size': 8
+            }
+    matplotlib.rc('font', **font)
+    
+    
     # timeline for each stock
+    #TODO: convert dates from timestamp to %Y-%m-%d
     start_date = df.index[0]
     end_date = df.index[len(df)-1]
     pd.plotting.plot_params = {'x_compat': True,}
     fig, ax = plt.subplots()
     fig.set_figheight(2)
-    plt.plot(df.index, Y)
+    plt.plot(Y)
     ax.set(
            xlabel = "date",
            ylabel = y_label,
@@ -103,12 +120,20 @@ def plot_time_series(title, y_label, Y, df = df):
           )
     # TODO: make x,y axis labels smaller
     plt.xticks(rotation=90)
-    st.pyplot(fig)
+    plt.grid()
+    fig.canvas.toolbar_visible = True
+    fig.canvas.header_visible = True
+    col.area_chart(Y)
+    
+    # return filter date range
+    return start_date, end_date
 
+# --- time series plot function - Seaborn --- #
 def plot_timeseries_sns(title, y_label, y, df = df):
     # create timeline for each stock
-    start_date = df.index[0]
-    end_date = df.index[len(df)-1]
+    # TODO: this is returning int -- convert to date
+    start_date = df.Date[0]
+    end_date = df.Date[len(df)-1]
     
     # plot selected timeframe
     fig = plt.figure()
@@ -116,34 +141,27 @@ def plot_timeseries_sns(title, y_label, y, df = df):
     sns.lineplot(df.index, y)
     plt.xticks(rotation = 90)
     st.pyplot(fig)
-    
-# --- stock price --- #
-# stock_price_series = plot_time_series('stock price', 'USD ($)', df.Close)
-stock_price_series = plot_timeseries_sns('stock price', 'USD ($)', df.Close)
+    return start_date, end_date
 
+
+# --- stock price --- #
+col1.write(f"{params['Company']['Name']}")
+price_start, price_end = plot_time_series('stock price', 'USD ($)', df["Adj Close"], col1)
 
 # --- stock volume --- #
-# volume_series = plot_time_series('trading volume', 'shares (millions)', df['Volume (millions)'])
-volume_series = plot_timeseries_sns('trading volume', 'shares (millions)', df['Volume (millions)'])
-
-
-# filter dates
-slider = st.slider('Select date', min_value=start_date, value=end_date ,max_value=end_date, format=format)
-## Sanity check
-st.table(pd.DataFrame([[start_date, slider, end_date]],
-              columns=['start',
-                       'selected',
-                       'end'],
-              index=['date']))
+col2.write(f"{params['Company']['Name']}")
+volume_start, volume_end = plot_time_series('trading volume', 'shares (millions)', df.iloc[:,4], col2)
 
 
 # retrieve the last 5 trading days
-st.write(f"""## *{params['stock']}* 5-day Performance """)
+st.write(f"""## *{params['Stock']}* 5-day Performance """)
 st.write(df.tail(5))
 
 # ---------------------- Stock performance KPIs ---------------------#
-analyze = Analyzer(df, start_date, end_date)
-open_day = analyze.get_day_price('2021-10-28')
+date_price = st.date_input("Select a date")
+analyze = Analyzer(df, price_start, price_end)
+day_price = analyze.get_day_price(date_price)
+st.print(f"Stock price on {date_price} was {day_price}")
 
 
 

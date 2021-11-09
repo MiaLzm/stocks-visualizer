@@ -8,6 +8,7 @@ Created on Fri Oct 22 15:48:49 2021
 import pandas as pd
 import os
 from pandas_datareader import data
+from datetime import date
 from datetime import datetime as dt
 from datetime import timedelta
 
@@ -23,7 +24,7 @@ class Stocks(object):
         
         # financial data source
         self.STOCK_SOURCE = 'yahoo'
-        self.START_DATE= dt.strptime(f'{year}-01-01', '%Y-%m-%d')
+        self.START_DATE= date(year, 1, 1).isoformat()
         
         
         # list of companies
@@ -32,11 +33,13 @@ class Stocks(object):
         self.CURRENT_STOCK_DF = pd.DataFrame()
         self.CURRENT_TICKER = ''
     
-    def clean_data(self):
-        fin_df = self.get_current_stock()
-        # enforce date formatting for Date column and set it as the index
-        fin_df['Date'] = pd.to_datetime([dt.today()+timedelta(days=x) for x in range(len(fin_df))])
-        return fin_df
+    def clean_data(self, df):
+                
+        # report trading Volume in millions
+        if not 'Volume (millions)' in df: 
+            df['Volume'] = df.Volume/1000000
+            df = df.rename(columns={'Volume': 'Volume (millions)'})
+        return df
     
     def get_current_ticker(self):
         """        
@@ -116,7 +119,7 @@ class Stocks(object):
     
         """
         # loop through a file containing a list of trading companies
-        for ticker in self.TICKER_OVERVIEW.iloc[:,0]:
+        for ticker in self.TICKER_OVERVIEW.index:
             self.save_trading_data(str(ticker)) # need to find earliest date for the stock
     
     
@@ -143,7 +146,7 @@ class Stocks(object):
             print(f"Retrieved {len(trading_history)} rows from file for {ticker}") # returns today as start date
         except FileNotFoundError:
             trading_history = self.get_current_stock() # returns today as start date
-        self.clean_data()
+        self.clean_data(trading_history)
         self.CURRENT_TICKER = ticker # saves stock symbol as a class variable
         return trading_history
      
@@ -196,15 +199,15 @@ class Stocks(object):
         # open the source file and return it as a DF
         try:
             trading_history = pd.read_csv(f"datasets/stocks/{ticker}.csv")
-            self.clean_data()
             print("Retrieved ", len(trading_history), " rows for ", ticker, "between ", startDt, " and ", endDt)
         except FileNotFoundError:
                 self.save_trading_data(ticker) # save the stock to CSV
-                trading_history = self.get_current_stock()
-                self.clean_data()
+                trading_history = self.get_current_stock()    
         
         
+        # cleaning step
+        self.clean_data(trading_history)
         # filter data using startDt and endDt
-        trading_history = trading_history[(trading_history.index >= startDt) & (trading_history.index <= endDt)]
+        #trading_history = trading_history[(trading_history.index >= startDt) & (trading_history.index <= endDt)]
         return trading_history                 
         
