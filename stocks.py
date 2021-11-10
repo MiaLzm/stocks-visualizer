@@ -101,7 +101,7 @@ class Stocks(object):
         """
         try:
             self.set_current_stock(ticker_sym, self.START_DATE)
-            self.get_current_stock().to_csv(self.STOCKS_BASE_PATH + f"/{ticker_sym}.csv")
+            self.get_current_stock().to_csv(self.STOCKS_BASE_PATH + f"/{ticker_sym}.csv", index = False)
             print("Saved stock history for ", ticker_sym, ".csv")
             self.stocks_list.append(ticker_sym) # add ticker to valid list (for UI)
         except Exception as e :
@@ -140,7 +140,7 @@ class Stocks(object):
         """
         # open the source file and return it as a DF
         try:
-            # trading_history = pd.read_csv(self.STOCKS_BASE_PATH + f"/{ticker}.csv") # remove for performance
+            trading_history = pd.read_csv(self.STOCKS_BASE_PATH + f"/{ticker}.csv") # remove for performance
             self.set_current_stock(ticker, self.START_DATE)
             trading_history = self.get_current_stock()
             print(f"Retrieved {len(trading_history)} rows from file for {ticker}") # returns today as start date
