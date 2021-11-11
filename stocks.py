@@ -28,7 +28,7 @@ class Stocks(object):
         
         
         # list of companies
-        self.TICKER_OVERVIEW = pd.DataFrame(pd.read_csv("nasdaq_screener.csv")).fillna("Unknown") # handle NaN values
+        self.TICKER_OVERVIEW = pd.DataFrame(pd.read_csv("nasdaq_screener_full.csv")).fillna("Unknown") # handle NaN values
         self.stocks_list = [] # populates UI with
         self.CURRENT_STOCK_DF = pd.DataFrame()
         self.CURRENT_TICKER = ''
@@ -146,7 +146,7 @@ class Stocks(object):
             print(f"Retrieved {len(trading_history)} rows from file for {ticker}") # returns today as start date
         except FileNotFoundError:
             trading_history = self.get_current_stock() # returns today as start date
-        self.clean_data(trading_history)
+        #self.clean_data(trading_history)
         self.CURRENT_TICKER = ticker # saves stock symbol as a class variable
         return trading_history
      
@@ -184,7 +184,7 @@ class Stocks(object):
         Parameters
         ----------
         ticker : String
-            Trading entity.
+            Trading entity
         fromDt : Date
             Start date for historical trading data.
         toDt : Date
@@ -202,12 +202,15 @@ class Stocks(object):
             print("Retrieved ", len(trading_history), " rows for ", ticker, "between ", startDt, " and ", endDt)
         except FileNotFoundError:
                 self.save_trading_data(ticker) # save the stock to CSV
+                # TODO: Error handling
                 trading_history = self.get_current_stock()    
         
         
         # cleaning step
         self.clean_data(trading_history)
         # filter data using startDt and endDt
+        startDt = dt.strptime(startDt, '%Y-%m-%d')
+        #startDt = dt.strptime(endDt, '%Y-%m-%d %H:%M:%S')
         #trading_history = trading_history[(trading_history.index >= startDt) & (trading_history.index <= endDt)]
         return trading_history                 
         

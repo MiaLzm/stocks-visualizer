@@ -43,11 +43,25 @@ st.write("""
          Select a stock of interest to see its historical data. \
              Use the Sector to identify stocks of interest.
          """)
-
-stock_name = st.sidebar.selectbox("Search for a stock (Option 1) type ahead single select", stock_list, index=0)
-stock_two = st.sidebar.multiselect("Search for a stock (Option 2) type ahead multi-select", options = stock_list)
+stock_name = st.sidebar.multiselect("Search for a stock type ahead multi-select", options = stock_list)
 '''params["Stock"] = companies.loc[companies.Name == stock_name]["Sector"]
 params["Company"] = stock_name'''
+
+# ------------------- chart selection ------------------------------#
+visualizations = ["Stock price", "Stock volume", "Moving averages"]
+selected_viz = st.sidebar.multiselect("Visualization", visualizations)
+
+# -------------------- Date selection ------------------------------#
+# filter dates
+timeline_options = ["10 years", "5 years", "1 year", "6 months", "3 months", "1 month"]
+
+# TODO: add logic to filter out dates outside trading history
+timeline = st.sidebar.selectbox("Time period", timeline_options)
+
+
+#TODO: show how old the data is - and provide a refresh      
+# pull in daily data
+st.sidebar.button("Refresh data")
 
 st.sidebar.write("--------------")
 st.sidebar.write("Filters")
@@ -83,22 +97,11 @@ df.index = pd.to_datetime(df.index, format = '%Y-%m-%d')
     stocks.clean_data(df)'''
 
 
-#TODO: show how old the data is - and provide a refresh      
-# pull in daily data
-st.sidebar.button("Refresh")
 
-# ------------------ Create floorplans -----------------------------#
+# ------------------ Create layout (2 X 3) -----------------------------#
 col1, col2 = st.columns(2)
 col3, col4 = st.columns(2)
 col5, col6 = st.columns(2)
-
-# ------------------- chart selection ------------------------------#
-visualizations = ["Stock price", "Stock volume", "Moving averages"]
-selected_viz = col1.multiselect("Visualization", visualizations)
-
-# -------------------- Date selection ------------------------------#
-# filter dates
-timeline = col2.selectbox("Time period", ["10 years", "5 years", "1 year", "6 months", "3 months", "1 month"])
 
 
 # ------------------ Plot data using filter parameters -------------#
@@ -118,7 +121,7 @@ def plot_time_series(title, y_label, Y, col, df = df):
     #TODO: convert dates from timestamp to %Y-%m-%d
     start_date = df.index[0]
     end_date = df.index[len(df)-1]
-    date_format = mdates.DateFormatter('%Y')
+    date_format = mdates.DateFormatter('%Y-%d')
     pd.plotting.plot_params = {'x_compat': True,}
     fig, ax = plt.subplots()
     fig.set_figheight(5)
@@ -147,7 +150,7 @@ def plot_time_series(title, y_label, Y, col, df = df):
     return start_date, end_date
 
 # --- time series plot function - Seaborn --- #
-def plot_time_series_sns(title, y_label, y, col, df = df):
+def plot_time_series_sns(title, y_label, Y, col, df = df):
     # create timeline for each stock
     # TODO: this is returning int -- convert to date
     start_date = df.index[0]
@@ -155,20 +158,26 @@ def plot_time_series_sns(title, y_label, y, col, df = df):
     
     # set aesthetics for the chart
     sns.set_theme()
-    sns.set_style("darkgrid")
+    sns.set_style("whitegrid")
     sns.color_palette("bright")
     fig, ax = plt.subplots()
     ax.set_xlabel("Date", fontsize = 16)
     ax.set_ylabel(y_label, fontsize = 16)
     ax.set_title(f"{ticker} {title}", fontsize = 16)
-    sns.regplot(x = mdates.date2num(df.index), y = y, 
-                    data = df, fit_reg = True, marker='^', color = 'purple')
-    #sns.lmplot(x = mdates.date2num(df.index), y = y, data = df, fit_reg = True)
+    sns.lineplot(x = mdates.date2num(df.index), y = Y, 
+                    data = df, color = 'blue', err_style = 'band')
     plt.xticks(rotation = 90)
     
     # format date axis
     date_formatter = DateFormatter('%Y')
     ax.xaxis.set_major_formatter(date_formatter)
+    
+    # draw a trend line
+    slope, intercept = np.polyfit(mdates.date2num(df.index), Y, 1)
+    reg_line = slope*mdates.date2num(df.index) + intercept
+    plt.plot(df.index, reg_line, color='orange', linewidth=4, linestyle="dashed")
+    
+    # TODO: create interactions
     
     
     # plot selected timeframe
@@ -179,29 +188,20 @@ def plot_time_series_sns(title, y_label, y, col, df = df):
 # --- stock price --- #
 # Streamlit area plot
 if 'Stock price' in selected_viz:
-    price_start, price_end = plot_time_series('stock price', 'USD ($)', df["Adj Close"], col1)
+    price_start, price_end = plot_time_series_sns('stock price', 'USD ($)', df["Adj Close"], col1)
 
-    # Seaborn line plot with regression line
-    price_start, price_end = plot_time_series_sns('stock price', 'USD ($)', df["Adj Close"], col3)
 
 # --- stock volume --- #
 if "Stock volume" in selected_viz:
     # area plot example
-    volume_start, volume_end = plot_time_series('trading volume', 'shares (millions)', df.loc[:,'Volume'], col2)
+    volume_start, volume_end = plot_time_series_sns('trading volume', 'shares (millions)', df.loc[:,'Volume'], col2)
     
-    # Seaborn line plot with regression line
-    volume_start, volume_end = plot_time_series_sns('trading volume', 'shares (millions)', df.loc[:,'Volume'], col4)
-
 # retrieve the last 5 trading days
-st.write(f"""## *{params['Stock']}* 5-day Performance """)
-st.write(df.tail(5))
+col5.write(f"""## *{params['Stock']}* 5-day Performance """)
+col5.write(df.tail(5))
 
 # ---------------------- Stock performance KPIs ---------------------#
-date_price = st.date_input("Select a date")
-#analyze = Analyzer(df, price_start, price_end)
+date_price = col6.date_input("Select a date")
+#analyze = Analyzer(df, '2000-01-01', '2021-11-10')
 #day_price = analyze.get_day_price(date_price)
-#st.print(f"Stock price on {date_price} was {day_price}")
-
-
-
-
+#col6.print(f"Stock price on {date_price} was {day_price}")
