@@ -28,28 +28,55 @@ companies = stocks.get_all_tickers_overview() # retrieves companies and descript
 companies = companies.set_index('Symbol')
 
 
-# dictionary to hold filter parameters
-params = dict()
-
-
 # ----------------- Build UI filter menu ------------------------------#
 # create sets to store unique instances to populate select boxes
 sectors = set(companies.loc[:,"Sector"])
+# TODO: remove all stocks with unusual characters, ^ in symbol, 
 stock_list = sorted(set(companies.loc[:, "Name"]))
-stock_list.insert(0, "")
 
 st.write("""
          # Stock analyzer
          Select a stock of interest to see its historical data. \
              Use the Sector to identify stocks of interest.
          """)
-stock_name = st.sidebar.multiselect("Search for a stock type ahead multi-select", options = stock_list)
-'''params["Stock"] = companies.loc[companies.Name == stock_name]["Sector"]
-params["Company"] = stock_name'''
+stock_name = st.sidebar.selectbox("Stock name",
+                                    options = stock_list)
 
-# ------------------- chart selection ------------------------------#
+# dictionary to hold stock data
+params = dict()
+
+def create_stock_item(source):
+    '''
+    Parameters
+    ----------
+    num : Integer
+        Integer for each stock selected.
+
+    Returns
+    -------
+    A dictionary object representation a the selected stock
+
+    '''
+    
+    return {'stock': companies.loc[companies['Name'] == source].index[0],
+            'name': stock_name,
+            'sector': companies.loc[companies['Name'] == source].Sector[0],
+            'industry': companies.loc[companies['Name'] == source].Industry[0],
+            'country': companies.loc[companies['Name'] == source].Country[0],
+            'IPO_year': companies.loc[companies['Name'] == source]['IPO Year'][0]
+            }
+    
+params = create_stock_item(stock_name)
+
+
+# print company details for selected stock
+st.write(f"""## *{params['stock']}*""")
+st.write(params["name"])
+
+# ------------------- visualization selection ------------------------------#
 visualizations = ["Stock price", "Stock volume", "Moving averages"]
 selected_viz = st.sidebar.multiselect("Visualization", visualizations)
+
 
 # -------------------- Date selection ------------------------------#
 # filter dates
@@ -63,50 +90,19 @@ timeline = st.sidebar.selectbox("Time period", timeline_options)
 # pull in daily data
 st.sidebar.button("Refresh data")
 
-st.sidebar.write("--------------")
-st.sidebar.write("Filters")
-sector = st.sidebar.selectbox("Choose a sector", sectors)
-params["Sector"] = sector
-# filter stocks dropdown based on sector
-ticker_syms = companies.loc[companies['Sector'] == sector]
-ticker = st.sidebar.selectbox("Choose a stock", ticker_syms.index)
-params["Stock"] = ticker
-params["Company"] = companies.loc[companies.index == ticker ]
-params["Company name"] = companies.loc[companies.index == ticker]['Name'].item()
-
-
-# company details
-st.write(f"""## *{params["Stock"]}*""")
-st.write(params["Company"])
-
 
 # ------------------ Load dataset from filter parameters -----------#
 todayDt = date.today()
-df = stocks.get_trading_history(params['Stock'], 
+df = stocks.get_trading_history(params["stock"], 
                                 stocks.START_DATE, 
                                 todayDt)
 
 
 # set date as the index and format date to timestamp
-
 df.index = pd.to_datetime(df.index, format = '%Y-%m-%d')
 
 
-# ensure to report trading Volume in millions
-'''if not 'Volume (millions)' in df:
-    stocks.clean_data(df)'''
-
-
-
-# ------------------ Create layout (2 X 3) -----------------------------#
-col1, col2 = st.columns(2)
-col3, col4 = st.columns(2)
-col5, col6 = st.columns(2)
-
-
 # ------------------ Plot data using filter parameters -------------#
-
-
 # --- time series plot function - Matplotlib --- #
 def plot_time_series(title, y_label, Y, col, df = df):
     # set plot font
@@ -121,7 +117,7 @@ def plot_time_series(title, y_label, Y, col, df = df):
     #TODO: convert dates from timestamp to %Y-%m-%d
     start_date = df.index[0]
     end_date = df.index[len(df)-1]
-    date_format = mdates.DateFormatter('%Y-%d')
+    date_format = mdates.DateFormatter('%Y')
     pd.plotting.plot_params = {'x_compat': True,}
     fig, ax = plt.subplots()
     fig.set_figheight(5)
@@ -129,7 +125,7 @@ def plot_time_series(title, y_label, Y, col, df = df):
     ax.set(
            xlabel = "date",
            ylabel = y_label,
-           title = f"""{ticker} {title}""",
+           title = f"""{params['name']} {title}""",
            xlim = (start_date, end_date)
           )
     ax.xaxis.set_major_formatter(date_format)
@@ -138,7 +134,8 @@ def plot_time_series(title, y_label, Y, col, df = df):
     plt.grid()
     fig.canvas.toolbar_visible = True
     fig.canvas.header_visible = True
-        
+   
+     
     # draw a trend line
     slope, intercept = np.polyfit(mdates.date2num(df.index), Y, 1)
     reg_line = slope*mdates.date2num(df.index) + intercept
@@ -149,10 +146,10 @@ def plot_time_series(title, y_label, Y, col, df = df):
     # return filter date range
     return start_date, end_date
 
+
 # --- time series plot function - Seaborn --- #
 def plot_time_series_sns(title, y_label, Y, col, df = df):
     # create timeline for each stock
-    # TODO: this is returning int -- convert to date
     start_date = df.index[0]
     end_date = df.index[len(df)-1]
     
@@ -163,26 +160,36 @@ def plot_time_series_sns(title, y_label, Y, col, df = df):
     fig, ax = plt.subplots()
     ax.set_xlabel("Date", fontsize = 16)
     ax.set_ylabel(y_label, fontsize = 16)
-    ax.set_title(f"{ticker} {title}", fontsize = 16)
+    ax.set_title(f"{params['name']} {title}", fontsize = 16)
     sns.lineplot(x = mdates.date2num(df.index), y = Y, 
                     data = df, color = 'blue', err_style = 'band')
     plt.xticks(rotation = 90)
+    
     
     # format date axis
     date_formatter = DateFormatter('%Y')
     ax.xaxis.set_major_formatter(date_formatter)
     
-    # draw a trend line
-    slope, intercept = np.polyfit(mdates.date2num(df.index), Y, 1)
-    reg_line = slope*mdates.date2num(df.index) + intercept
-    plt.plot(df.index, reg_line, color='orange', linewidth=4, linestyle="dashed")
     
+    # draw a trend line - if at least two points
+    if len(df.index) > 1:
+        slope, intercept = np.polyfit(mdates.date2num(df.index), Y, 1)
+        reg_line = slope*mdates.date2num(df.index) + intercept
+        plt.plot(df.index, reg_line, color='orange', linewidth=4, linestyle="dashed")
+        # plot selected timeframe
+        col.pyplot(fig)
+    else:
+        col.write("Not enough data points available.")
     # TODO: create interactions
     
     
-    # plot selected timeframe
-    col.pyplot(fig)
     return start_date, end_date
+
+# ------------------ Create layout (2 X 4) -----------------------------#
+col1, col2 = st.columns(2)
+col3, col4 = st.columns(2)
+col5, col6 = st.columns(2)
+col7, col8 = st.columns(2)
 
 
 # --- stock price --- #
@@ -197,7 +204,7 @@ if "Stock volume" in selected_viz:
     volume_start, volume_end = plot_time_series_sns('trading volume', 'shares (millions)', df.loc[:,'Volume'], col2)
     
 # retrieve the last 5 trading days
-col5.write(f"""## *{params['Stock']}* 5-day Performance """)
+col5.write(f"""## *{params['stock']}* 5-day Performance """)
 col5.write(df.tail(5))
 
 # ---------------------- Stock performance KPIs ---------------------#
