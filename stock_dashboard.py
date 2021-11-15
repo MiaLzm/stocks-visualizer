@@ -78,13 +78,6 @@ visualizations = ["Stock price", "Stock volume", "Moving averages"]
 selected_viz = st.sidebar.multiselect("Visualization", visualizations)
 
 
-# -------------------- Date selection ------------------------------#
-# filter dates
-timeline_options = ["10 years", "5 years", "1 year", "6 months", "3 months", "1 month"]
-
-# TODO: add logic to filter out dates outside trading history
-timeline = st.sidebar.selectbox("Time period", timeline_options)
-
 
 #TODO: show how old the data is - and provide a refresh      
 # pull in daily data
@@ -100,6 +93,16 @@ df = stocks.get_trading_history(params["stock"],
 
 # set date as the index and format date to timestamp
 df.index = pd.to_datetime(df.index, format = '%Y-%m-%d')
+
+# -------------------- Date selection ------------------------------#
+# filter dates
+time_start = st.sidebar.date_input("Timeline start date", 
+                                   value=todayDt, 
+                                   max_value=todayDt)
+
+time_end = st.sidebar.date_input("Timeline end date", 
+                                   value=todayDt, 
+                                   max_value=todayDt)
 
 
 # ------------------ Plot data using filter parameters -------------#
@@ -154,13 +157,15 @@ def plot_time_series_sns(title, y_label, Y, col, df = df):
     end_date = df.index[len(df)-1]
     
     # set aesthetics for the chart
+    sns.set(rc={'figure.figsize':(32,32)})
     sns.set_theme()
     sns.set_style("whitegrid")
     sns.color_palette("bright")
     fig, ax = plt.subplots()
-    ax.set_xlabel("Date", fontsize = 16)
-    ax.set_ylabel(y_label, fontsize = 16)
-    ax.set_title(f"{params['name']} {title}", fontsize = 16)
+    fig.set_figheight(32)
+    ax.set_xlabel("Date", fontsize = 32)
+    ax.set_ylabel(y_label, fontsize = 32)
+    ax.set_title(f"{params['name']} {title}", fontsize = 36)
     sns.lineplot(x = mdates.date2num(df.index), y = Y, 
                     data = df, color = 'blue', err_style = 'band')
     plt.xticks(rotation = 90)
