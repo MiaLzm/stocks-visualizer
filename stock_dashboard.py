@@ -2,6 +2,7 @@
 
 import os.path
 from datetime import date
+from datetime import datetime as dt
 from get_stock_data import get_stock_data
 import matplotlib
 import matplotlib.dates as mdates
@@ -13,6 +14,7 @@ import streamlit as st
 from matplotlib.dates import DateFormatter
 
 from moving_averages import compute_moving_averages
+from predictive_analysis import linear_reg
 from stocks import Stocks
 
 # initialize stocks object to load data from the beginning of the chosen year to current date
@@ -26,9 +28,7 @@ companies = stocks.get_all_tickers_overview()  # retrieves companies and descrip
 companies = companies.set_index('Symbol')
 
 # ----------------- Build UI filter menu ------------------------------#
-# create sets to store unique instances to populate select boxes
-sectors = set(companies.loc[:, "Sector"])
-# TODO: remove all stocks with unusual characters, ^ in symbol, 
+# unique sorted set of company names
 stock_list = sorted(set(companies.loc[:, "Name"]))
 
 st.write("""
@@ -84,57 +84,31 @@ st.write(f"""## *{params['stock']} : {params['name']}*""")
 visualizations = ["Stock price", "Stock volume", "Moving averages"]
 selected_viz = st.sidebar.multiselect("Visualization", visualizations)
 
-# --- Load stock history data from Yahoo --- #
-df = get_stock_data(params["stock"], stocks.START_DATE)
-df.index = pd.to_datetime(df.index).date
-print(df.head())
+
+# ------------------ Load dataset from filter parameters -----------#
+todayDt = date.today()
+df = stocks.get_trading_history(params["stock"], 
+                                stocks.START_DATE, 
+                                todayDt)
+#df = get_stock_data(params["stock"], stocks.START_DATE)
+
+
+# -------------------- Date selection ------------------------------#
+# filter dates
+time_start = st.sidebar.date_input("Timeline start date", 
+                                   value=todayDt, 
+                                   max_value=todayDt)
+
+time_end = st.sidebar.date_input("Timeline end date", 
+                                   value=todayDt, 
+                                   max_value=todayDt)
 
 # --- Slidebar to choose length for computing Moving average
-window = st.sidebar.slider(label='Span to Compute Moving Average', min_value=2, max_value=200, value=20, step=1)
+window = st.sidebar.slider(label='Span to Compute Moving Average', 
+                           min_value=2, max_value=200, value=20, step=1)
 
 
 # ------------------ Plot data using filter parameters -------------#
-# --- time series plot function - Matplotlib --- #
-def plot_time_series(title, y_label, Y, col, df=df):
-    # set plot font
-    font = {'family': 'normal',
-            'weight': 'normal',
-            'size': 8
-            }
-    matplotlib.rc('font', **font)
-
-    # timeline for each stock
-    # TODO: convert dates from timestamp to %Y-%m-%d
-    start_date = df.index[0]
-    end_date = df.index[len(df) - 1]
-    date_format = mdates.DateFormatter('%Y')
-    pd.plotting.plot_params = {'x_compat': True, }
-    fig, ax = plt.subplots()
-    fig.set_figheight(5)
-    plt.plot(df.index, Y)
-    ax.set(
-        xlabel="date",
-        ylabel=y_label,
-        title=f"""{params['name']} {title}""",
-        xlim=(start_date, end_date)
-    )
-    ax.xaxis.set_major_formatter(date_format)
-    # TODO: decide on matplotlib or streamlit plot
-    plt.xticks(rotation=90)
-    plt.grid()
-    fig.canvas.toolbar_visible = True
-    fig.canvas.header_visible = True
-
-    # draw a trend line
-    slope, intercept = np.polyfit(mdates.date2num(df.index), Y, 1)
-    reg_line = slope * mdates.date2num(df.index) + intercept
-    plt.plot(df.index, reg_line)
-    col.write(fig)
-
-    # return filter date range
-    return start_date, end_date
-
-
 # --- time series plot function - Seaborn --- #
 def plot_time_series_sns(title, y_label, Y, col, df=df):
     # create timeline for each stock
@@ -142,30 +116,35 @@ def plot_time_series_sns(title, y_label, Y, col, df=df):
     end_date = df.index[len(df) - 1]
 
     # set aesthetics for the chart
-    sns.set(rc={'figure.figsize': (32, 32)})
-    sns.set_theme()
+    sns.set(font_scale=6)
     sns.set_style("whitegrid")
     sns.color_palette("bright")
     fig, ax = plt.subplots()
     fig.set_figheight(32)
-    ax.set_xlabel("Date", fontsize=32)
-    ax.set_ylabel(y_label, fontsize=32)
-    ax.set_title(f"{params['name']} {title}", fontsize=36)
-    sns.lineplot(x=mdates.date2num(df.index), y=Y,
-                 data=df, color='blue', err_style='band')
-    plt.xticks(rotation=90)
-
+    ax.set_xlabel("Date", fontsize = 100)
+    ax.set_ylabel(y_label, fontsize = 100)
+    ax.set_title(f"{title}", fontsize = 100)
+    sns.lineplot(x = mdates.date2num(df.index), y = Y, 
+                    data = df, color = 'blue', err_style = 'band',
+                    linewidth = 10)
+    plt.xticks(rotation = 90)
+    
+    
     # format date axis
     date_formatter = DateFormatter('%Y')
     ax.xaxis.set_major_formatter(date_formatter)
 
     # draw a trend line - if at least two points
     if len(df.index) > 1:
-        slope, intercept = np.polyfit(mdates.date2num(df.index), Y, 1)
-        reg_line = slope * mdates.date2num(df.index) + intercept
-        plt.plot(df.index, reg_line, color='orange', linewidth=4, linestyle="dashed")
-        # plot selected timeframe
-        col.pyplot(fig)
+        # TODO: remove this fix when Nans sorted
+        if "Moving averages" not in selected_viz:
+            slope, intercept = np.polyfit(mdates.date2num(df.index), Y, 1)
+            reg_line = slope*mdates.date2num(df.index) + intercept
+            plt.plot(df.index, reg_line, color='orange', linewidth=20, linestyle="dashed")
+            # plot selected timeframe
+            col.pyplot(fig)
+        else:
+            col.pyplot(fig)
     else:
         col.write("Not enough data points available.")
     # TODO: create interactions
@@ -190,13 +169,14 @@ if 'Stock price' in selected_viz:
 # --- stock volume --- #
 if "Stock volume" in selected_viz:
     # area plot example
-    volume_start, volume_end = plot_time_series_sns('trading volume', 'shares (millions)', df.loc[:, 'Volume'], col2)
+    volume_start, volume_end = plot_time_series_sns('trading volume', 'shares', df.loc[:, 'Volume'], col2)
 
 # --- Plot Moving Average --- #
 if "Moving averages" in selected_viz:
+    # TODO: address Nans
+    # add moving averages columns to the trading dataframe
     compute_moving_averages(df, 'Adj Close', window)
-    plot_time_series_sns('Moving Averages', ' Moving Avg.', df.loc[:, 'SMA'], col3)
-    print(df.head())
+    plot_time_series_sns('Moving Averages', 'Moving Avg.', df.loc[:, 'SMA'], col3)
     # to do - plot the graphs for received df
 
 # retrieve the last 5 trading days

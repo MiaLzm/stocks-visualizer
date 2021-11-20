@@ -34,13 +34,13 @@ class Stocks(object):
         self.CURRENT_TICKER = ''
     
     def clean_data(self, df):
-                
-        # report trading Volume in millions
-        if not 'Volume (millions)' in df: 
-            df['Volume'] = df.Volume/1000000
-            df = df.rename(columns={'Volume': 'Volume (millions)'})
-        return df
-    
+        # set date as index and format to datetime     
+        if 'Date' in df.columns:
+            df.set_index('Date', inplace=True)
+            #df.index = pd.to_datetime(df.index, format = '%Y-%m-%d')
+            df.index = [dt.strptime(date, '%Y-%m-%d') for date in df.index]
+            return df
+        
     def get_current_ticker(self):
         """        
         Returns the current ticker symbol name.
@@ -101,7 +101,7 @@ class Stocks(object):
         """
         try:
             self.set_current_stock(ticker_sym, self.START_DATE)
-            self.get_current_stock().to_csv(self.STOCKS_BASE_PATH + f"/{ticker_sym}.csv", index = False)
+            self.get_current_stock().to_csv(self.STOCKS_BASE_PATH + f"/{ticker_sym}.csv")
             print("Saved stock history for ", ticker_sym, ".csv")
             self.stocks_list.append(ticker_sym) # add ticker to valid list (for UI)
         except Exception as e :
@@ -205,9 +205,9 @@ class Stocks(object):
                 # TODO: Error handling
                 trading_history = self.get_current_stock()    
         
-        
-        # cleaning step
+        # clean step
         self.clean_data(trading_history)
+        
         # filter data using startDt and endDt
         startDt = dt.strptime(startDt, '%Y-%m-%d')
         #startDt = dt.strptime(endDt, '%Y-%m-%d %H:%M:%S')
