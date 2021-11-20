@@ -6,4 +6,3 @@ pandas_datareader
 datetime
 seaborn
 sklearn
-math
